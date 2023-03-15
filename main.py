@@ -6,11 +6,14 @@ import hashlib
 import time
 import threading
 import os
+import whisper
 
 OUTPUT_DIR = 'output'
 
 
-def record_clip(record_flag):
+def record_clip(record_flag, files: list):
+    print("record_clip thread started")
+
     while record_flag[0]:
         audio_uuid = uuid.uuid4()
         sha256 = hashlib.sha256(str(audio_uuid).encode('utf-8')).hexdigest()
@@ -37,7 +40,7 @@ def record_clip(record_flag):
         frames = []
         is_recording = False
 
-        print("Hold 'space' to start recording. Release 'space' to stop recording. Press 'q' to stop the program.")
+        print("Hold 'space' to start recording. Release 'space' to stop recording. Press 'CTRL + q' to stop the program.")
 
         while True:
             if keyboard.is_pressed('space'):
@@ -48,7 +51,7 @@ def record_clip(record_flag):
                 frames.append(data)
             elif is_recording:
                 start_time = time.time()
-                while time.time() - start_time < 1:
+                while time.time() - start_time < 0.5:
                     data = stream.read(CHUNK)
                     frames.append(data)
 
@@ -74,10 +77,21 @@ def record_clip(record_flag):
         wf.close()
 
 
-def on_q(record_flag):
+        file = OUTPUT_FILE
+        while not os.path.exists(file):
+            print("Waiting for audio file to save...")
+            time.sleep(0.1)
+
+        print(file)
+
+        model = whisper.load_model("base")
+        result = model.transcribe(file)
+        print(result["text"])
+
+
+def on_q(record_flags):
     print("'q' key was pressed")
-    record_flag[0] = False
-    exit(0)
+    record_flags[0] = False
 
 
 def main():
@@ -87,13 +101,16 @@ def main():
         os.makedirs(OUTPUT_DIR)
 
     record_flags = [True]
+    files = []  # Queue
 
-    keyboard.add_hotkey('q', on_q, args=[record_flags])
+    keyboard.add_hotkey('ctrl+q', on_q, args=[record_flags])
 
     recording_thread = threading.Thread(
-        target=record_clip, args=(record_flags,))
+        target=record_clip, args=(record_flags, files,))
 
     recording_thread.start()
+
+    recording_thread.join()
 
 
 if __name__ == "__main__":
