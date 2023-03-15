@@ -1,12 +1,19 @@
 import pyaudio
 import wave
 import keyboard
+import uuid
+import hashlib
+import time
 
-CHUNK = 8182
+audio_uuid = uuid.uuid4()
+sha256 = hashlib.sha256(str(audio_uuid).encode('utf-8')).hexdigest()
+short_uuid = sha256[:8]
+
+CHUNK = 4096  # 8182
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
 RATE = 44100
-WAVE_OUTPUT_FILENAME = "output.wav"
+WAVE_OUTPUT_FILENAME = f"output-{short_uuid}.wav"
 
 p = pyaudio.PyAudio()
 
@@ -22,6 +29,8 @@ stream = p.open(format=FORMAT,
 frames = []
 is_recording = False
 
+print("Hold 'space' to start recording. Release 'space' to stop recording")
+
 while True:
     if keyboard.is_pressed('space'):
         if not is_recording:
@@ -30,7 +39,13 @@ while True:
         data = stream.read(CHUNK)
         frames.append(data)
     elif is_recording:
+        start_time = time.time()
+        while time.time() - start_time < 1:
+            data = stream.read(CHUNK)
+            frames.append(data)
+            
         print("Recording stopped.")
+        print(f"Outputted to file {WAVE_OUTPUT_FILENAME}")
         break
 
 stream.stop_stream()
