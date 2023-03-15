@@ -4,11 +4,14 @@ import keyboard
 
 CHUNK = 8182
 FORMAT = pyaudio.paInt16
-CHANNELS = 1
+CHANNELS = 2
 RATE = 44100
 WAVE_OUTPUT_FILENAME = "output.wav"
 
 p = pyaudio.PyAudio()
+
+# print(pyaudio.PyAudio().get_device_count())
+# exit()
 
 stream = p.open(format=FORMAT,
                 channels=CHANNELS,
