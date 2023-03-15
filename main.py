@@ -7,8 +7,15 @@ import time
 import threading
 import os
 import whisper
+from dotenv import load_dotenv
+import deepl
+
+load_dotenv()
 
 OUTPUT_DIR = 'output'
+DEEPL_API_KEY = os.environ.get("DEEPL_API_KEY")
+
+translator = deepl.Translator(DEEPL_API_KEY)
 
 
 def record_clip(record_flag, files: list):
@@ -76,7 +83,6 @@ def record_clip(record_flag, files: list):
         wf.writeframes(b''.join(frames))
         wf.close()
 
-
         file = OUTPUT_FILE
         while not os.path.exists(file):
             print("Waiting for audio file to save...")
@@ -85,8 +91,15 @@ def record_clip(record_flag, files: list):
         print(file)
 
         model = whisper.load_model("base")
-        result = model.transcribe(file)
+        result = model.transcribe(file, fp16=False, language='English')
         print(result["text"])
+
+        transcribed_text = result['text']
+        jp_translation = translator.translate_text(
+            transcribed_text, target_lang='ZH')
+
+        jp_text = jp_translation.text
+        print(jp_text)
 
 
 def on_q(record_flags):

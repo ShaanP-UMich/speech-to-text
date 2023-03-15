@@ -75,3 +75,4 @@ Icon
 # Audio files
 output-*
 output/
+.env

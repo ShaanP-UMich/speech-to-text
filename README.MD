@@ -13,3 +13,5 @@ Windows users: User PowerShell (doesn't work natively through WSL2)
     .\env\Scripts\activate # Activate virtual env
 2. Setup modules
     pip install -r requirements.txt
+3. Install ffmpeg with choco
+    choco install ffmpeg # (https://jcutrer.com/windows/install-chocolatey-choco-windows10)
