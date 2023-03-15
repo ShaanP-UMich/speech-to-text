@@ -5,6 +5,9 @@ import uuid
 import hashlib
 import time
 import threading
+import os
+
+OUTPUT_DIR = 'output'
 
 
 def record_clip(record_flag):
@@ -18,6 +21,7 @@ def record_clip(record_flag):
         CHANNELS = 2
         RATE = 44100
         WAVE_OUTPUT_FILENAME = f"output-{short_uuid}.wav"
+        OUTPUT_FILE = os.path.join(OUTPUT_DIR, WAVE_OUTPUT_FILENAME)
 
         p = pyaudio.PyAudio()
 
@@ -33,7 +37,7 @@ def record_clip(record_flag):
         frames = []
         is_recording = False
 
-        print("Hold 'space' to start recording. Release 'space' to stop recording")
+        print("Hold 'space' to start recording. Release 'space' to stop recording. Press 'q' to stop the program.")
 
         while True:
             if keyboard.is_pressed('space'):
@@ -62,7 +66,7 @@ def record_clip(record_flag):
         stream.close()
         p.terminate()
 
-        wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
+        wf = wave.open(OUTPUT_FILE, 'wb')
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(p.get_sample_size(FORMAT))
         wf.setframerate(RATE)
@@ -78,6 +82,9 @@ def on_q(record_flag):
 
 def main():
     print("main function")
+
+    if not os.path.exists(OUTPUT_DIR):
+        os.makedirs(OUTPUT_DIR)
 
     record_flags = [True]
 
