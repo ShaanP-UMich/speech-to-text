@@ -5,3 +5,4 @@ pynput>=1.7.6
 ffmpeg>=1.4
 deepl>=1.14.0
 python-dotenv>=1.0.0
+voicevox-client>=0.1.4
