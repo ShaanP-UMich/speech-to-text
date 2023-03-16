@@ -80,6 +80,8 @@ def record_clip(record_flag, files: list):
                 stream.close()
                 p.terminate()
                 exit()
+            
+            time.sleep(0.1)
 
         stream.stop_stream()
         stream.close()
