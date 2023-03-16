@@ -104,11 +104,11 @@ def record_clip(record_flag, files: list):
         print(result["text"])
 
         transcribed_text = result['text']
-        jp_translation = translator.translate_text(
-            transcribed_text, target_lang='JA')
+        # jp_translation = translator.translate_text(
+        #     transcribed_text, target_lang='JA')
 
-        jp_text = jp_translation.text
-        # jp_text = '丘の上にいるのです。'
+        # jp_text = jp_translation.text
+        jp_text = '丘の上にいるのです。'
         print(jp_text)
 
         # query_app(jp_text, 3)
@@ -227,8 +227,6 @@ def main():
         target=record_clip, args=(record_flags, files,))
 
     recording_thread.start()
-
-    recording_thread.join()
 
 
 if __name__ == "__main__":
