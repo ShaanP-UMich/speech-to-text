@@ -15,3 +15,7 @@ Windows users: User PowerShell (doesn't work natively through WSL2)
     pip install -r requirements.txt
 3. Install ffmpeg with choco
     choco install ffmpeg # (https://jcutrer.com/windows/install-chocolatey-choco-windows10)
+
+Notes/Limitations:
+- Translation treats some noun's as adjectives (i.e if your friend is named "Young" it treats that as an adjective)
+and messes with final result

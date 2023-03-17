@@ -22,6 +22,7 @@ load_dotenv()
 
 OUTPUT_DIR = 'output'
 DEEPL_API_KEY = os.environ.get("DEEPL_API_KEY")
+OUTPUT_DEVICE_NAME = os.environ.get("OUTPUT_DEVICE_NAME")
 
 CHUNK = 4096  # 8182
 FORMAT = pyaudio.paInt16
@@ -101,16 +102,16 @@ def record_clip(record_flag, files: list):
 
         print(file)
 
-        model = whisper.load_model("base")
+        model = whisper.load_model("small")
         result = model.transcribe(file, fp16=False, language='English')
         print(result["text"])
 
         transcribed_text = result['text']
-        # jp_translation = translator.translate_text(
-        #     transcribed_text, target_lang='JA')
+        jp_translation = translator.translate_text(
+            transcribed_text, target_lang='JA')
 
-        # jp_text = jp_translation.text
-        jp_text = '丘の上にいるのです。'
+        jp_text = jp_translation.text
+        # jp_text = '丘の上にいるのです。'
         print(jp_text)
 
         # query_app(jp_text, 3)
@@ -155,9 +156,9 @@ async def async_query_app(text, speaker: int, uuid: str):
         device_index = None
         for i in range(p.get_device_count()):
             dev = p.get_device_info_by_index(i)
-            print(dev['name'])
-            if dev['name'] == 'CABLE Input (VB-Audio Virtual C':
-                print(dev)
+            # print(dev['name'])
+            if dev['name'] == OUTPUT_DEVICE_NAME:
+                # print(dev)
                 device_index = dev['index']
                 break
 
